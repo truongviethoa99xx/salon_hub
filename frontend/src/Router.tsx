@@ -1,10 +1,15 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import HomePage from './app/HomePage';
 import AdminLayout from './app/admin/layout';
-import AdminDashboard from './app/admin/dashboard/page';
-import AdminSchedulerPage from './app/admin/scheduler/page';
-import AdminServicesPage from './app/admin/services/page';
-import AdminShiftsPage from './app/admin/shifts/page';
+import {
+  Dashboard as LuxeDashboard,
+  CalendarView as LuxeCalendarView,
+  POS as LuxePOS,
+  ServiceInventory as LuxeServiceInventory,
+  StaffManager as LuxeStaffManager,
+  SettingsPage as LuxeSettingsPage,
+  AdminLogin as LuxeAdminLogin,
+} from './app/admin/luxe/AdminViews';
 import StaffQueuePage from './app/staff/queue/page';
 
 const StaffLayout = ({ children }: { children?: React.ReactNode }) => {
@@ -22,12 +27,17 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        
+
+        {/* Luxe-style Admin */}
+        <Route path="/admin/login" element={<LuxeAdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="scheduler" element={<AdminSchedulerPage />} />
-          <Route path="services" element={<AdminServicesPage />} />
-          <Route path="shifts" element={<AdminShiftsPage />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<LuxeDashboard />} />
+          <Route path="calendar" element={<LuxeCalendarView />} />
+          <Route path="pos" element={<LuxePOS />} />
+          <Route path="services" element={<LuxeServiceInventory />} />
+          <Route path="staff" element={<LuxeStaffManager />} />
+          <Route path="settings" element={<LuxeSettingsPage />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
