@@ -1,0 +1,170 @@
+{
+  "common": {
+    "appName": "STYLIST",
+    "appSubtitle": "Salon Management",
+    "copyright": "© 2024 Stylist Salon",
+    "home": "Trang chủ",
+    "save": "Lưu",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "actions": "Hành động",
+    "name": "Tên",
+    "price": "Giá",
+    "time": "Thời gian",
+    "minutes": "phút",
+    "currency": "VNĐ"
+  },
+  "sidebar": {
+    "scheduler": "Lịch Tổng",
+    "services": "Quản lý Dịch vụ",
+    "shifts": "Quản lý Ca làm việc"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Tổng quan quản lý salon của bạn",
+    "todaySchedule": "Lịch Hôm Nay",
+    "services": "Dịch Vụ",
+    "shifts": "Ca Làm Việc",
+    "scheduleChange": "+12% so với hôm qua",
+    "servicesChange": "3 dịch vụ mới",
+    "shiftsChange": "Đang hoạt động",
+    "quickActions": "Thao Tác Nhanh",
+    "viewSchedule": "Xem Lịch",
+    "manageServices": "Quản Lý Dịch Vụ",
+    "manageShifts": "Quản Lý Ca",
+    "recentActivity": "Hoạt Động Gần Đây",
+    "newBooking": "Đặt lịch mới",
+    "newService": "Dịch vụ mới được thêm",
+    "ago": "trước",
+    "minutesAgo": "phút trước",
+    "hoursAgo": "giờ trước"
+  },
+  "scheduler": {
+    "title": "Lịch Tổng",
+    "subtitle": "Quản lý lịch làm việc và đặt chỗ của các thợ",
+    "stylistColumn": "Thợ cắt"
+  },
+  "services": {
+    "title": "Quản lý Dịch vụ",
+    "subtitle": "Quản lý các dịch vụ và gói combo của salon",
+    "addService": "Thêm Dịch vụ",
+    "editService": "Sửa Dịch vụ",
+    "serviceName": "Tên dịch vụ",
+    "servicePrice": "Giá",
+    "serviceDuration": "Thời gian (phút)",
+    "isCombo": "Là Combo?",
+    "combo": "Combo",
+    "single": "Đơn lẻ",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa dịch vụ này?"
+  },
+  "shifts": {
+    "title": "Quản lý Ca làm việc",
+    "subtitle": "Xếp lịch ca làm việc cho các thợ tại các chi nhánh",
+    "addShift": "Xếp lịch",
+    "newShift": "Xếp lịch làm việc mới",
+    "stylist": "Thợ",
+    "branch": "Chi nhánh",
+    "date": "Ngày",
+    "startTime": "Giờ bắt đầu",
+    "endTime": "Giờ kết thúc",
+    "saveShift": "Lưu ca làm việc",
+    "stylistName": "Tên Thợ",
+    "workingHours": "Giờ làm việc"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "Premium Salon Experience",
+      "title": "STYLIST SALON",
+      "subtitle": "Nơi phong cách gặp gỡ nghệ thuật. Trải nghiệm dịch vụ cắt tóc và chăm sóc tóc đẳng cấp quốc tế tại Việt Nam.",
+      "bookNow": "Đặt lịch ngay",
+      "viewServices": "Xem dịch vụ",
+      "yearsExperience": "Năm kinh nghiệm",
+      "customers": "Khách hàng",
+      "stylists": "Thợ chuyên nghiệp"
+    },
+    "services": {
+      "sectionBadge": "Dịch vụ của chúng tôi",
+      "title": "Dịch vụ Đẳng cấp",
+      "subtitle": "Trải nghiệm các dịch vụ chăm sóc tóc chuyên nghiệp với đội ngũ stylist tài năng",
+      "popular": "PHỔ BIẾN",
+      "bookService": "Đặt lịch",
+      "contactCta": "Không tìm thấy dịch vụ bạn cần?",
+      "contactButton": "Liên hệ tư vấn miễn phí"
+    },
+    "about": {
+      "sectionBadge": "Về chúng tôi",
+      "title": "15 Năm Tạo Nên Phong Cách Việt",
+      "description": "Stylist Salon ra đời từ đam mê và khát vọng nâng tầm ngành làm đẹp Việt Nam. Chúng tôi tin rằng mỗi mái tóc là một tác phẩm nghệ thuật, và mỗi khách hàng xứng đáng được trải nghiệm dịch vụ đẳng cấp quốc tế.",
+      "professional": "Chuyên nghiệp",
+      "dedicated": "Tận tâm",
+      "community": "Cộng đồng",
+      "trendy": "Xu hướng",
+      "learnMore": "Tìm hiểu thêm về chúng tôi"
+    },
+    "team": {
+      "sectionBadge": "Đội ngũ chuyên gia",
+      "title": "Gặp gỡ Stylist của chúng tôi",
+      "subtitle": "Đội ngũ chuyên gia tài năng với nhiều năm kinh nghiệm và đam mê nghề",
+      "experience": "Kinh nghiệm",
+      "bookWith": "Đặt lịch với",
+      "joinTeamTitle": "Bạn có đam mê với nghề làm tóc?",
+      "joinTeamSubtitle": "Chúng tôi luôn tìm kiếm những tài năng mới để gia nhập đội ngũ",
+      "joinTeamButton": "Tìm hiểu cơ hội nghề nghiệp"
+    },
+    "booking": {
+      "sectionBadge": "Đặt lịch nhanh",
+      "title": "Đặt lịch Chỉ 30 giây",
+      "subtitle": "Điền thông tin bên dưới, chúng tôi sẽ liên hệ xác nhận lịch hẹn trong vòng 15 phút.",
+      "flexibleTime": "Linh hoạt thời gian",
+      "chooseStylist": "Chọn stylist yêu thích",
+      "noWaiting": "Không phải chờ đợi",
+      "contactDirect": "Hoặc liên hệ trực tiếp",
+      "formTitle": "Đặt lịch ngay",
+      "fullName": "Họ và tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "date": "Ngày hẹn",
+      "time": "Giờ hẹn",
+      "service": "Dịch vụ",
+      "selectService": "Chọn dịch vụ",
+      "selectStylist": "Chọn stylist (không bắt buộc)",
+      "note": "Ghi chú",
+      "submit": "Xác nhận đặt lịch",
+      "terms": "Bằng việc đặt lịch, bạn đồng ý với điều khoản dịch vụ của chúng tôi"
+    },
+    "testimonials": {
+      "sectionBadge": "Đánh giá khách hàng",
+      "title": "50,000+ Khách hàng Hài lòng & Tin tưởng",
+      "subtitle": "Những chia sẻ chân thực từ khách hàng đã trải nghiệm dịch vụ của chúng tôi",
+      "ratingText": "Từ hơn 8,500+ đánh giá trên Google & Facebook",
+      "cta": "Trải nghiệm dịch vụ để có đánh giá của riêng bạn!",
+      "ctaButton": "Đặt lịch ngay hôm nay"
+    },
+    "contact": {
+      "sectionBadge": "Liên hệ",
+      "title": "Ghé thăm Chúng tôi",
+      "subtitle": "Đến với Stylist Salon để trải nghiệm dịch vụ đẳng cấp",
+      "address": "Địa chỉ",
+      "phone": "Điện thoại",
+      "email": "Email",
+      "hours": "Giờ mở cửa",
+      "socialTitle": "Kết nối với chúng tôi",
+      "socialSubtitle": "Theo dõi để cập nhật xu hướng tóc mới nhất và nhận ưu đãi đặc biệt!",
+      "mapButton": "Chỉ đường trên Google Maps"
+    },
+    "footer": {
+      "description": "Nâng tầm vẻ đẹp Việt với dịch vụ chăm sóc tóc đẳng cấp quốc tế.",
+      "quickLinks": "Liên kết",
+      "services": "Dịch vụ",
+      "contact": "Liên hệ",
+      "madeWith": "Made with",
+      "inVietnam": "in Vietnam"
+    }
+  }
+}
+

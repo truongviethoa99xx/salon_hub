@@ -1,0 +1,170 @@
+{
+  "common": {
+    "appName": "STYLIST",
+    "appSubtitle": "Salon Management",
+    "copyright": "© 2024 Stylist Salon",
+    "home": "Home",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "actions": "Actions",
+    "name": "Name",
+    "price": "Price",
+    "time": "Time",
+    "minutes": "minutes",
+    "currency": "USD"
+  },
+  "sidebar": {
+    "scheduler": "Schedule",
+    "services": "Service Management",
+    "shifts": "Shift Management"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your salon management",
+    "todaySchedule": "Today's Schedule",
+    "services": "Services",
+    "shifts": "Shifts",
+    "scheduleChange": "+12% from yesterday",
+    "servicesChange": "3 new services",
+    "shiftsChange": "Active",
+    "quickActions": "Quick Actions",
+    "viewSchedule": "View Schedule",
+    "manageServices": "Manage Services",
+    "manageShifts": "Manage Shifts",
+    "recentActivity": "Recent Activity",
+    "newBooking": "New booking",
+    "newService": "New service added",
+    "ago": "ago",
+    "minutesAgo": "minutes ago",
+    "hoursAgo": "hours ago"
+  },
+  "scheduler": {
+    "title": "Schedule",
+    "subtitle": "Manage work schedules and appointments for stylists",
+    "stylistColumn": "Stylist"
+  },
+  "services": {
+    "title": "Service Management",
+    "subtitle": "Manage salon services and combo packages",
+    "addService": "Add Service",
+    "editService": "Edit Service",
+    "serviceName": "Service Name",
+    "servicePrice": "Price",
+    "serviceDuration": "Duration (minutes)",
+    "isCombo": "Is Combo?",
+    "combo": "Combo",
+    "single": "Single",
+    "deleteConfirm": "Are you sure you want to delete this service?"
+  },
+  "shifts": {
+    "title": "Shift Management",
+    "subtitle": "Schedule shifts for stylists at branches",
+    "addShift": "Schedule",
+    "newShift": "New Shift Schedule",
+    "stylist": "Stylist",
+    "branch": "Branch",
+    "date": "Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "saveShift": "Save Shift",
+    "stylistName": "Stylist Name",
+    "workingHours": "Working Hours"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "Premium Salon Experience",
+      "title": "STYLIST SALON",
+      "subtitle": "Where style meets art. Experience world-class haircut and hair care services in Vietnam.",
+      "bookNow": "Book Now",
+      "viewServices": "View Services",
+      "yearsExperience": "Years Experience",
+      "customers": "Customers",
+      "stylists": "Professional Stylists"
+    },
+    "services": {
+      "sectionBadge": "Our Services",
+      "title": "Premium Services",
+      "subtitle": "Experience professional hair care services with talented stylists",
+      "popular": "POPULAR",
+      "bookService": "Book Now",
+      "contactCta": "Can't find what you need?",
+      "contactButton": "Free Consultation"
+    },
+    "about": {
+      "sectionBadge": "About Us",
+      "title": "15 Years Creating Vietnamese Style",
+      "description": "Stylist Salon was born from passion and aspiration to elevate Vietnam's beauty industry. We believe every hairstyle is a work of art, and every customer deserves world-class service.",
+      "professional": "Professional",
+      "dedicated": "Dedicated",
+      "community": "Community",
+      "trendy": "Trendy",
+      "learnMore": "Learn More About Us"
+    },
+    "team": {
+      "sectionBadge": "Expert Team",
+      "title": "Meet Our Stylists",
+      "subtitle": "Talented experts with years of experience and passion",
+      "experience": "Experience",
+      "bookWith": "Book with",
+      "joinTeamTitle": "Passionate about hairstyling?",
+      "joinTeamSubtitle": "We're always looking for new talents to join our team",
+      "joinTeamButton": "Explore Career Opportunities"
+    },
+    "booking": {
+      "sectionBadge": "Quick Booking",
+      "title": "Book in Just 30 Seconds",
+      "subtitle": "Fill in the information below, we'll confirm your appointment within 15 minutes.",
+      "flexibleTime": "Flexible Schedule",
+      "chooseStylist": "Choose Your Favorite Stylist",
+      "noWaiting": "No Waiting",
+      "contactDirect": "Or Contact Directly",
+      "formTitle": "Book Now",
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email",
+      "date": "Appointment Date",
+      "time": "Appointment Time",
+      "service": "Service",
+      "selectService": "Select Service",
+      "selectStylist": "Choose Stylist (Optional)",
+      "note": "Note",
+      "submit": "Confirm Booking",
+      "terms": "By booking, you agree to our terms of service"
+    },
+    "testimonials": {
+      "sectionBadge": "Customer Reviews",
+      "title": "50,000+ Happy & Trusted Customers",
+      "subtitle": "Genuine feedback from customers who have experienced our services",
+      "ratingText": "From over 8,500+ reviews on Google & Facebook",
+      "cta": "Experience our service to have your own review!",
+      "ctaButton": "Book Today"
+    },
+    "contact": {
+      "sectionBadge": "Contact",
+      "title": "Visit Us",
+      "subtitle": "Come to Stylist Salon to experience premium service",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Opening Hours",
+      "socialTitle": "Connect With Us",
+      "socialSubtitle": "Follow us for latest hair trends and special offers!",
+      "mapButton": "Get Directions on Google Maps"
+    },
+    "footer": {
+      "description": "Elevating Vietnamese beauty with world-class hair care services.",
+      "quickLinks": "Quick Links",
+      "services": "Services",
+      "contact": "Contact",
+      "madeWith": "Made with",
+      "inVietnam": "in Vietnam"
+    }
+  }
+}
+

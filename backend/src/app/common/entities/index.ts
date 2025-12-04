@@ -1,0 +1,12 @@
+// apps/backend/src/app/common/entities/index.ts
+export * from './branch.entity';
+export * from './user.entity';
+export * from './service.entity';
+export * from './salon-resource.entity';
+export * from './booking.entity';
+export * from './booking-queue.entity';
+export * from './stylist-shift.entity';
+export * from './service-record.entity';
+export * from './notification-history.entity';
+export * from './social-account.entity';
+export * from './conversation.entity';
