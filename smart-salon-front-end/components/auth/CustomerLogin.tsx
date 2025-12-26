@@ -55,11 +55,20 @@ export const CustomerLogin: React.FC<CustomerLoginProps> = ({
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074"
+          alt="Salon Background"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f] via-[#0a0a0f]/80 to-[#0a0a0f]" />
+      </div>
+
+      {/* Gradient Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-[150px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[200px]" />
       </div>
 
       {/* Left Side - Branding */}
@@ -98,7 +107,7 @@ export const CustomerLogin: React.FC<CustomerLoginProps> = ({
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative z-10">
         <div className="relative w-full max-w-md">
           {/* Card */}
           <div className="bg-[#12121a]/80 backdrop-blur-2xl rounded-3xl p-8 lg:p-10 border border-white/5 shadow-2xl">
