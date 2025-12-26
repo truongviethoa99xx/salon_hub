@@ -6,7 +6,9 @@
       "Bash(cat:*)",
       "Bash(PGPASSWORD=postgres psql:*)",
       "Bash(docker ps:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(cd:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
