@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { MapPin, Menu, X, Globe } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MapPin, Menu, X, Globe, User, LogIn, UserPlus, ChevronDown, LogOut, Scissors, Shield } from 'lucide-react';
 import { Branch } from '../types';
 import { Language, translations } from '../translations';
 import { useData } from '../contexts/DataContext';
@@ -12,20 +12,42 @@ interface HeaderProps {
   lang: Language;
   onLangChange: (lang: Language) => void;
   activeSection: string;
+  onLoginClick?: (type: 'customer' | 'barber' | 'admin') => void;
+  onRegisterClick?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  currentBranch, 
-  branches, 
+export const Header: React.FC<HeaderProps> = ({
+  currentBranch,
+  branches,
   onBranchChange,
   lang,
   onLangChange,
-  activeSection
+  activeSection,
+  onLoginClick,
+  onRegisterClick
 }) => {
-  const { siteSettings } = useData();
+  const { siteSettings, currentUser, isAuthenticated, logout } = useData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const authDropdownRef = useRef<HTMLDivElement>(null);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
   const t = translations[lang].nav;
   const tMenu = translations[lang].menu;
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (authDropdownRef.current && !authDropdownRef.current.contains(event.target as Node)) {
+        setIsAuthDropdownOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navLinks = [
     { id: 'home', label: t.home },
@@ -111,11 +133,11 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Lang Selector */}
-                <div className="relative">
+                <div className="relative hidden sm:block">
                    <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none text-gray-400">
                         <Globe size={12} />
                    </div>
-                   <select 
+                   <select
                         value={lang}
                         onChange={(e) => onLangChange(e.target.value as Language)}
                         className="bg-dark-800 text-white text-xs rounded border border-white/10 py-1.5 pl-6 pr-2 appearance-none focus:outline-none hover:border-brand-500 cursor-pointer uppercase font-bold"
@@ -125,8 +147,101 @@ export const Header: React.FC<HeaderProps> = ({
                    </select>
                 </div>
 
+                {/* Auth Buttons */}
+                {isAuthenticated && currentUser ? (
+                  // User is logged in - Show user dropdown
+                  <div className="relative hidden sm:block" ref={userDropdownRef}>
+                    <button
+                      onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                      className="flex items-center gap-2 bg-dark-800 hover:bg-dark-700 text-white text-sm rounded-full py-2 px-4 border border-white/10 transition-colors"
+                    >
+                      <div className="w-6 h-6 bg-brand-500 rounded-full flex items-center justify-center text-black text-xs font-bold">
+                        {currentUser.full_name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="max-w-[100px] truncate font-medium">{currentUser.full_name}</span>
+                      <ChevronDown size={14} className={`transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {isUserDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-dark-800 rounded-lg border border-white/10 shadow-xl py-1 z-50">
+                        <div className="px-4 py-2 border-b border-white/10">
+                          <p className="text-xs text-gray-400">Xin chào,</p>
+                          <p className="text-sm font-medium text-white truncate">{currentUser.full_name}</p>
+                          <p className="text-xs text-brand-500">{currentUser.role}</p>
+                        </div>
+                        <button
+                          onClick={() => { logout(); setIsUserDropdownOpen(false); }}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
+                          <LogOut size={16} />
+                          Đăng xuất
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // User is not logged in - Show auth buttons
+                  <div className="hidden sm:flex items-center gap-2">
+                    {/* Register Button */}
+                    <button
+                      onClick={onRegisterClick}
+                      className="flex items-center gap-1.5 text-sm font-medium text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                      <UserPlus size={16} />
+                      Đăng ký
+                    </button>
+
+                    {/* Login Dropdown */}
+                    <div className="relative" ref={authDropdownRef}>
+                      <button
+                        onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)}
+                        className="flex items-center gap-1.5 bg-brand-500 hover:bg-brand-600 text-black text-sm font-bold px-4 py-2 rounded-lg transition-colors"
+                      >
+                        <LogIn size={16} />
+                        Đăng nhập
+                        <ChevronDown size={14} className={`transition-transform ${isAuthDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {isAuthDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-52 bg-dark-800 rounded-lg border border-white/10 shadow-xl py-1 z-50">
+                          <button
+                            onClick={() => { onLoginClick?.('customer'); setIsAuthDropdownOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                          >
+                            <User size={18} className="text-brand-500" />
+                            <div className="text-left">
+                              <p className="font-medium">Khách hàng</p>
+                              <p className="text-xs text-gray-500">Đặt lịch & quản lý</p>
+                            </div>
+                          </button>
+                          <button
+                            onClick={() => { onLoginClick?.('barber'); setIsAuthDropdownOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                          >
+                            <Scissors size={18} className="text-emerald-500" />
+                            <div className="text-left">
+                              <p className="font-medium">Barber</p>
+                              <p className="text-xs text-gray-500">Thợ cắt tóc</p>
+                            </div>
+                          </button>
+                          <button
+                            onClick={() => { onLoginClick?.('admin'); setIsAuthDropdownOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                          >
+                            <Shield size={18} className="text-indigo-500" />
+                            <div className="text-left">
+                              <p className="font-medium">Admin</p>
+                              <p className="text-xs text-gray-500">Quản trị hệ thống</p>
+                            </div>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Mobile Menu Toggle */}
-                <button 
+                <button
                     className="md:hidden text-white p-1 hover:text-brand-500 transition-colors"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
@@ -170,6 +285,62 @@ export const Header: React.FC<HeaderProps> = ({
                                 ))}
                             </select>
                         </div>
+                    </div>
+
+                    {/* Mobile Auth Buttons */}
+                    <div className="mt-4 pt-4 border-t border-white/5">
+                      {isAuthenticated && currentUser ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3 px-3 py-2 bg-dark-800 rounded-lg">
+                            <div className="w-10 h-10 bg-brand-500 rounded-full flex items-center justify-center text-black font-bold">
+                              {currentUser.full_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-white font-medium">{currentUser.full_name}</p>
+                              <p className="text-xs text-brand-500">{currentUser.role}</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => { logout(); setIsMenuOpen(false); }}
+                            className="w-full flex items-center justify-center gap-2 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                          >
+                            <LogOut size={18} />
+                            Đăng xuất
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <button
+                            onClick={() => { onRegisterClick?.(); setIsMenuOpen(false); }}
+                            className="w-full flex items-center justify-center gap-2 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors border border-white/10"
+                          >
+                            <UserPlus size={18} />
+                            Đăng ký thành viên
+                          </button>
+                          <p className="text-xs text-gray-500 text-center uppercase font-bold pt-2">Đăng nhập</p>
+                          <button
+                            onClick={() => { onLoginClick?.('customer'); setIsMenuOpen(false); }}
+                            className="w-full flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                          >
+                            <User size={18} className="text-brand-500" />
+                            Khách hàng
+                          </button>
+                          <button
+                            onClick={() => { onLoginClick?.('barber'); setIsMenuOpen(false); }}
+                            className="w-full flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                          >
+                            <Scissors size={18} className="text-emerald-500" />
+                            Barber
+                          </button>
+                          <button
+                            onClick={() => { onLoginClick?.('admin'); setIsMenuOpen(false); }}
+                            className="w-full flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                          >
+                            <Shield size={18} className="text-indigo-500" />
+                            Admin
+                          </button>
+                        </div>
+                      )}
                     </div>
                 </div>
             </div>

@@ -19,20 +19,31 @@ import { Contact } from './components/Contact';
 import { Booking } from './components/Booking';
 import { Login } from './components/admin/Login';
 import { Dashboard } from './components/admin/Dashboard';
+import { CustomerRegister, CustomerLogin, BarberLogin, AdminLogin } from './components/auth';
 import { Loader2 } from 'lucide-react';
+
+// View modes type
+type ViewMode =
+  | 'landing'
+  | 'register'
+  | 'customer-login'
+  | 'barber-login'
+  | 'admin-login'
+  | 'admin'
+  | 'barber-dashboard';
 
 const MainApp: React.FC = () => {
   // Access dynamic data from Context
-  const { branches, siteSettings, isLoading, logout } = useData();
-  
+  const { branches, siteSettings, isLoading, logout, currentUser } = useData();
+
   const [currentBranchId, setCurrentBranchId] = useState<string>('');
   const [cart, setCart] = useState<Service[]>([]);
   const [lang, setLang] = useState<Language>('vi');
   const [activeSection, setActiveSection] = useState<string>('home');
   const [bookingParams, setBookingParams] = useState<BookingParams | null>(null);
-  
-  // View State (Landing, Login, Admin)
-  const [viewMode, setViewMode] = useState<'landing' | 'login' | 'admin'>('landing');
+
+  // View State
+  const [viewMode, setViewMode] = useState<ViewMode>('landing');
 
   // Sync Document Title
   useEffect(() => {
@@ -72,17 +83,26 @@ const MainApp: React.FC = () => {
     return () => observer.disconnect();
   }, [viewMode]);
 
-  // Check LocalStorage for Admin Session
+  // Check LocalStorage for Admin Session and auto-redirect based on role
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        // Optional: Auto redirect
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      try {
+        const user = JSON.parse(savedUser);
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+          setViewMode('admin');
+        } else if (user.role === 'BARBER') {
+          setViewMode('barber-dashboard');
+        }
+      } catch (e) {
+        // Invalid user data, ignore
+      }
     }
   }, []);
 
   // Listen for custom event from Footer to open Login
   useEffect(() => {
-    const handleAdminRequest = () => setViewMode('login');
+    const handleAdminRequest = () => setViewMode('admin-login');
     window.addEventListener('requestAdminLogin', handleAdminRequest);
     return () => window.removeEventListener('requestAdminLogin', handleAdminRequest);
   }, []);
@@ -104,13 +124,48 @@ const MainApp: React.FC = () => {
     setCart([]);
   };
 
-  const handleLoginSuccess = () => {
-      setViewMode('admin');
+  // Auth handlers
+  const handleLoginClick = (type: 'customer' | 'barber' | 'admin') => {
+    switch (type) {
+      case 'customer':
+        setViewMode('customer-login');
+        break;
+      case 'barber':
+        setViewMode('barber-login');
+        break;
+      case 'admin':
+        setViewMode('admin-login');
+        break;
+    }
+  };
+
+  const handleRegisterClick = () => {
+    setViewMode('register');
+  };
+
+  const handleCustomerLoginSuccess = () => {
+    setViewMode('landing');
+  };
+
+  const handleBarberLoginSuccess = () => {
+    setViewMode('barber-dashboard');
+  };
+
+  const handleAdminLoginSuccess = (role: 'ADMIN' | 'SUPER_ADMIN') => {
+    setViewMode('admin');
+  };
+
+  const handleRegisterSuccess = () => {
+    setViewMode('customer-login');
   };
 
   const handleLogout = () => {
-      logout();
-      setViewMode('landing');
+    logout();
+    setViewMode('landing');
+  };
+
+  const handleBackToLanding = () => {
+    setViewMode('landing');
   };
 
   // --- LOADING SCREEN ---
@@ -125,25 +180,85 @@ const MainApp: React.FC = () => {
 
   // --- RENDER LOGIC ---
 
-  if (viewMode === 'login') {
-      return <Login onLogin={handleLoginSuccess} onBack={() => setViewMode('landing')} />;
+  // Customer Register
+  if (viewMode === 'register') {
+    return (
+      <CustomerRegister
+        onRegisterSuccess={handleRegisterSuccess}
+        onBack={handleBackToLanding}
+        onLoginClick={() => setViewMode('customer-login')}
+      />
+    );
   }
 
+  // Customer Login
+  if (viewMode === 'customer-login') {
+    return (
+      <CustomerLogin
+        onLoginSuccess={handleCustomerLoginSuccess}
+        onBack={handleBackToLanding}
+        onRegisterClick={handleRegisterClick}
+      />
+    );
+  }
+
+  // Barber Login
+  if (viewMode === 'barber-login') {
+    return (
+      <BarberLogin
+        onLoginSuccess={handleBarberLoginSuccess}
+        onBack={handleBackToLanding}
+      />
+    );
+  }
+
+  // Admin Login (for Admin & Super Admin)
+  if (viewMode === 'admin-login') {
+    return (
+      <AdminLogin
+        onLoginSuccess={handleAdminLoginSuccess}
+        onBack={handleBackToLanding}
+      />
+    );
+  }
+
+  // Admin Dashboard
   if (viewMode === 'admin') {
-      return <Dashboard onLogout={handleLogout} />;
+    return <Dashboard onLogout={handleLogout} />;
+  }
+
+  // Barber Dashboard (placeholder - can be expanded later)
+  if (viewMode === 'barber-dashboard') {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Barber Dashboard</h1>
+          <p className="text-gray-400 mb-6">Xin chào, {currentUser?.full_name}</p>
+          <p className="text-gray-500 mb-8">Tính năng đang được phát triển...</p>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg"
+          >
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!currentBranch) return null;
 
   return (
     <div className="min-h-screen bg-brand-950 flex flex-col font-sans text-white">
-      <Header 
-        currentBranch={currentBranch} 
-        branches={branches} 
+      <Header
+        currentBranch={currentBranch}
+        branches={branches}
         onBranchChange={handleBranchChange}
         lang={lang}
         onLangChange={setLang}
         activeSection={activeSection}
+        onLoginClick={handleLoginClick}
+        onRegisterClick={handleRegisterClick}
       />
       
       <main className="flex-grow w-full flex flex-col gap-0">

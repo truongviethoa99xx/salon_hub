@@ -1,11 +1,11 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { 
-    Branch, Service, Stylist, Product, Review, 
+import {
+    Branch, Service, Stylist, Product, Review,
     BookingItem, SiteSettings, Conversation,
     Customer, AIConfig, EmailConfig, ZNSConfig, Promotion
 } from '../types';
-import { apiClient } from '../services/apiClient';
+import { apiClient, AuthUser, UserRole } from '../services/apiClient';
 
 interface DataContextType {
   // Data
@@ -17,21 +17,31 @@ interface DataContextType {
   bookings: BookingItem[];
   siteSettings: SiteSettings;
   conversations: Conversation[];
-  
+
   // New Modules Data
   customers: Customer[];
   promotions: Promotion[];
   aiConfig: AIConfig | null;
   emailConfig: EmailConfig | null;
   znsConfig: ZNSConfig | null;
-  
+
   // States
   isLoading: boolean;
   isAdmin: boolean;
-  
-  // Actions
+
+  // User Auth State
+  currentUser: AuthUser | null;
+  isAuthenticated: boolean;
+
+  // Actions - Legacy
   login: (u: string, p: string) => Promise<void>;
   logout: () => void;
+
+  // Actions - New Auth
+  loginCustomer: (username: string, password: string) => Promise<void>;
+  loginBarber: (username: string, password: string) => Promise<void>;
+  loginAdmin: (username: string, password: string) => Promise<{ role: UserRole }>;
+  registerCustomer: (data: { full_name: string; phone: string; email?: string; password: string }) => Promise<void>;
   
   updateBranch: (id: string, data: Partial<Branch>) => void;
   updateService: (id: string, data: Partial<Service>) => void;
@@ -77,6 +87,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // User Auth State
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   // Public Data
   const [branches, setBranches] = useState<Branch[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -84,7 +98,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [products, setProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  
+
   // Public but dynamic based on backend
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [aiConfig, setAiConfig] = useState<AIConfig | null>(null); // Needed for public chat
@@ -133,10 +147,23 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     };
     loadPublicData();
-    
-    // Check Session
+
+    // Check Session & Restore User
     const token = localStorage.getItem('authToken');
-    if (token) setIsAdmin(true);
+    const savedUser = localStorage.getItem('currentUser');
+    if (token && savedUser) {
+      try {
+        const user = JSON.parse(savedUser) as AuthUser;
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+          setIsAdmin(true);
+        }
+      } catch (e) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+      }
+    }
   }, []);
 
   // 2. Admin Load (Private Data)
@@ -168,15 +195,55 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // --- ACTIONS ---
 
-  const login = async (u: string, p: string) => {
-      const data = await apiClient.login(u, p);
-      localStorage.setItem('authToken', data.token);
-      setIsAdmin(true);
+  // Helper to save auth state
+  const saveAuthState = (token: string, user: AuthUser) => {
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    setCurrentUser(user);
+    setIsAuthenticated(true);
   };
 
+  // Legacy login (backwards compatibility)
+  const login = async (u: string, p: string) => {
+    const data = await apiClient.login(u, p);
+    saveAuthState(data.access_token, data.user);
+    if (data.user.role === 'ADMIN' || data.user.role === 'SUPER_ADMIN') {
+      setIsAdmin(true);
+    }
+  };
+
+  // Customer Login
+  const loginCustomer = async (username: string, password: string) => {
+    const data = await apiClient.loginCustomer(username, password);
+    saveAuthState(data.access_token, data.user);
+  };
+
+  // Barber Login
+  const loginBarber = async (username: string, password: string) => {
+    const data = await apiClient.loginBarber(username, password);
+    saveAuthState(data.access_token, data.user);
+  };
+
+  // Admin Login (returns role for redirect logic)
+  const loginAdmin = async (username: string, password: string): Promise<{ role: UserRole }> => {
+    const data = await apiClient.loginAdmin(username, password);
+    saveAuthState(data.access_token, data.user);
+    setIsAdmin(true);
+    return { role: data.user.role };
+  };
+
+  // Customer Register
+  const registerCustomer = async (data: { full_name: string; phone: string; email?: string; password: string }) => {
+    await apiClient.registerCustomer(data);
+  };
+
+  // Logout
   const logout = () => {
-      localStorage.removeItem('authToken');
-      setIsAdmin(false);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    setIsAdmin(false);
   };
 
   // Branch
@@ -302,7 +369,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       bookings, siteSettings, conversations,
       customers, promotions, aiConfig, emailConfig, znsConfig,
       isLoading, isAdmin,
+      currentUser, isAuthenticated,
       login, logout,
+      loginCustomer, loginBarber, loginAdmin, registerCustomer,
       updateBranch, updateService, addService, deleteService,
       updateStylist, addStylist, toggleStylistStatus,
       addBooking, updateBookingStatus, updateSiteSettings, markConversationRead, sendMessage,

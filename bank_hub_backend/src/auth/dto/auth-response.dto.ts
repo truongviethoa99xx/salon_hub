@@ -12,6 +12,8 @@ export class AuthResponseDto {
       id: { type: 'number' },
       username: { type: 'string' },
       full_name: { type: 'string' },
+      phone: { type: 'string' },
+      email: { type: 'string' },
       role: { enum: UserRole },
     },
   })
@@ -19,6 +21,8 @@ export class AuthResponseDto {
     id: number;
     username: string;
     full_name: string;
+    phone: string;
+    email: string;
     role: UserRole;
   };
 }

@@ -9,8 +9,43 @@ import {
 } from '../constants';
 
 // --- CONFIGURATION ---
-const API_URL = 'https://api.smartsalon.com/v1'; 
+const API_URL = 'https://api.smartsalon.com/v1';
 const USE_MOCK_API = true; // FORCE TRUE FOR DEMO
+
+// --- USER TYPES ---
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'BARBER' | 'CUSTOMER';
+
+export interface AuthUser {
+  id: number;
+  username: string;
+  full_name: string;
+  phone: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  user: AuthUser;
+}
+
+export interface RegisterData {
+  full_name: string;
+  phone: string;
+  email?: string;
+  password: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+  user: {
+    id: number;
+    full_name: string;
+    phone: string;
+    email: string;
+    role: string;
+  };
+}
 
 // --- HELPERS ---
 const getHeaders = () => {
@@ -30,7 +65,24 @@ const handleResponse = async (response: Response) => {
 };
 
 // --- MOCK DATA STORE (In-Memory) ---
+interface MockUser {
+  id: number;
+  username: string;
+  phone: string;
+  email: string;
+  password: string;
+  full_name: string;
+  role: UserRole;
+}
+
 let mockStore = {
+  // Mock users for testing
+  users: [
+    { id: 1, username: 'superadmin', phone: '0900000001', email: 'superadmin@salon.com', password: '123456', full_name: 'Super Admin', role: 'SUPER_ADMIN' as UserRole },
+    { id: 2, username: 'admin', phone: '0900000002', email: 'admin@salon.com', password: '123456', full_name: 'Admin Chi Nhánh', role: 'ADMIN' as UserRole },
+    { id: 3, username: 'barber1', phone: '0900000003', email: 'barber@salon.com', password: '123456', full_name: 'Barber Minh', role: 'BARBER' as UserRole },
+    { id: 4, username: 'customer1', phone: '0901234567', email: 'customer@gmail.com', password: '123456', full_name: 'Khách Hàng A', role: 'CUSTOMER' as UserRole },
+  ] as MockUser[],
   branches: [...BRANCHES],
   services: [...SERVICES],
   stylists: [...STYLISTS],
@@ -135,14 +187,129 @@ const mockCall = <T>(data: T, delay = 500): Promise<T> => {
   return new Promise((resolve) => setTimeout(() => resolve(data), delay));
 };
 
+// --- MOCK AUTH HELPERS ---
+const findMockUser = (identifier: string, password: string, allowedRoles?: UserRole[]): MockUser | null => {
+  const user = mockStore.users.find(u =>
+    (u.username === identifier || u.phone === identifier || u.email === identifier) &&
+    u.password === password
+  );
+  if (!user) return null;
+  if (allowedRoles && !allowedRoles.includes(user.role)) return null;
+  return user;
+};
+
+const buildAuthResponse = (user: MockUser): AuthResponse => ({
+  access_token: `mock-jwt-token-${user.role.toLowerCase()}-${Date.now()}`,
+  user: {
+    id: user.id,
+    username: user.username,
+    full_name: user.full_name,
+    phone: user.phone,
+    email: user.email,
+    role: user.role,
+  }
+});
+
 export const apiClient = {
-  // --- AUTH ---
-  login: async (username: string, password: string) => {
+  // --- AUTH: CUSTOMER ---
+  registerCustomer: async (data: RegisterData): Promise<RegisterResponse> => {
     if (USE_MOCK_API) {
-      if (username === 'admin' && password === '123456') {
-        return mockCall({ token: 'mock-jwt-token', user: { id: 1, role: 'admin' } });
+      // Check if phone exists
+      const existingPhone = mockStore.users.find(u => u.phone === data.phone);
+      if (existingPhone) {
+        return Promise.reject(new Error('Số điện thoại đã được sử dụng'));
       }
-      return new Promise((_, reject) => setTimeout(() => reject(new Error('Sai tài khoản hoặc mật khẩu (Thử: admin/123456)')), 500));
+      // Check if email exists
+      if (data.email) {
+        const existingEmail = mockStore.users.find(u => u.email === data.email);
+        if (existingEmail) {
+          return Promise.reject(new Error('Email đã được sử dụng'));
+        }
+      }
+      // Create new user
+      const newUser: MockUser = {
+        id: mockStore.users.length + 1,
+        username: data.phone,
+        phone: data.phone,
+        email: data.email || '',
+        password: data.password,
+        full_name: data.full_name,
+        role: 'CUSTOMER'
+      };
+      mockStore.users.push(newUser);
+      return mockCall({
+        message: 'Đăng ký thành công',
+        user: {
+          id: newUser.id,
+          full_name: newUser.full_name,
+          phone: newUser.phone,
+          email: newUser.email,
+          role: newUser.role
+        }
+      }, 800);
+    }
+    return fetch(`${API_URL}/auth/customer/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(handleResponse);
+  },
+
+  loginCustomer: async (username: string, password: string): Promise<AuthResponse> => {
+    if (USE_MOCK_API) {
+      const user = findMockUser(username, password, ['CUSTOMER']);
+      if (!user) {
+        return Promise.reject(new Error('Số điện thoại/email hoặc mật khẩu không đúng'));
+      }
+      return mockCall(buildAuthResponse(user));
+    }
+    return fetch(`${API_URL}/auth/customer/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    }).then(handleResponse);
+  },
+
+  // --- AUTH: BARBER ---
+  loginBarber: async (username: string, password: string): Promise<AuthResponse> => {
+    if (USE_MOCK_API) {
+      const user = findMockUser(username, password, ['BARBER']);
+      if (!user) {
+        return Promise.reject(new Error('Thông tin đăng nhập không đúng hoặc bạn không phải là Barber'));
+      }
+      return mockCall(buildAuthResponse(user));
+    }
+    return fetch(`${API_URL}/auth/barber/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    }).then(handleResponse);
+  },
+
+  // --- AUTH: ADMIN & SUPER_ADMIN ---
+  loginAdmin: async (username: string, password: string): Promise<AuthResponse> => {
+    if (USE_MOCK_API) {
+      const user = findMockUser(username, password, ['ADMIN', 'SUPER_ADMIN']);
+      if (!user) {
+        return Promise.reject(new Error('Thông tin đăng nhập không đúng hoặc bạn không có quyền truy cập'));
+      }
+      return mockCall(buildAuthResponse(user));
+    }
+    return fetch(`${API_URL}/auth/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    }).then(handleResponse);
+  },
+
+  // --- AUTH: LEGACY (backwards compatibility) ---
+  login: async (username: string, password: string): Promise<AuthResponse> => {
+    if (USE_MOCK_API) {
+      const user = findMockUser(username, password);
+      if (!user) {
+        return Promise.reject(new Error('Sai tài khoản hoặc mật khẩu'));
+      }
+      return mockCall(buildAuthResponse(user));
     }
     return fetch(`${API_URL}/auth/login`, {
       method: 'POST',
