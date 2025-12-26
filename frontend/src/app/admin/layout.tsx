@@ -1,1 +1,0 @@
-export { AdminLayout as default } from './luxe/AdminViews';

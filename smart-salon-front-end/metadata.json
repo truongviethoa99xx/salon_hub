@@ -1,0 +1,7 @@
+{
+  "name": "Smart Salon O2O",
+  "description": "A premium, mobile-first Smart Salon booking application with AI integration.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

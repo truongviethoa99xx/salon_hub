@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(xargs basename:*)",
+      "Bash(cat:*)",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)"
+    ]
+  }
+}
